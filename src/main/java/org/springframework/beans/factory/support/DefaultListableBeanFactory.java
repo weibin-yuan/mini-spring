@@ -1,6 +1,6 @@
 package org.springframework.beans.factory.support;
 
-import org.springframework.beans.factory.BeanException;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 
 import java.util.Map;
@@ -11,10 +11,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
     @Override
-    protected BeanDefinition getBeanDefinition(String beanName) throws BeanException {
+    protected BeanDefinition getBeanDefinition(String beanName) throws BeansException {
         BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanName);
         if (beanDefinition == null) {
-            throw new BeanException("no bean name '" + beanName + "' is define");
+            throw new BeansException("no bean name '" + beanName + "' is define");
         }
         return beanDefinition;
     }

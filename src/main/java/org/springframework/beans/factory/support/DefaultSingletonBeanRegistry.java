@@ -1,6 +1,6 @@
 package org.springframework.beans.factory.support;
 
-import org.springframework.beans.factory.BeanException;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     protected void addSingleton(String beanName, Object singletonBean) {
         Object oldObject = this.singletonObjects.get(beanName);
         if (oldObject != null) {
-            throw new BeanException(beanName + ": There is already");
+            throw new BeansException(beanName + ": There is already");
         }
         this.singletonObjects.put(beanName, singletonBean);
     }
