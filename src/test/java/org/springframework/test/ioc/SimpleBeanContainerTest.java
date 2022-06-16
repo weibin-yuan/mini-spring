@@ -1,6 +1,8 @@
 package org.springframework.test.ioc;
 
 import org.junit.Test;
+import org.springframework.beans.PropertyValue;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.CglibSubclassingInstantiationStrategy;
@@ -20,11 +22,16 @@ public class SimpleBeanContainerTest {
 		DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 		InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
 //		beanFactory.setInstantiationStrategy(instantiationStrategy);
-		BeanDefinition beanDefinition = new BeanDefinition(HelloService.class);
-		beanFactory.registerBeanDefinition("helloService", beanDefinition);
+		PropertyValues pvs = new PropertyValues();
+		pvs.addPropertyValue(new PropertyValue("age", 18));
+		pvs.addPropertyValue(new PropertyValue("name", "ywb"));
+		BeanDefinition beanDefinition = new BeanDefinition(Person.class, pvs);
+		beanFactory.registerBeanDefinition("person", beanDefinition);
 
-		HelloService helloService = (HelloService) beanFactory.getBean("helloService");
-		helloService.sayHello();
+		Person person = (Person) beanFactory.getBean("person");
+		System.out.println(person);
+		assertThat(person.getName()).isEqualTo("ywb");
+		assertThat(person.getAge()).isEqualTo(18);
 	}
 
 }
