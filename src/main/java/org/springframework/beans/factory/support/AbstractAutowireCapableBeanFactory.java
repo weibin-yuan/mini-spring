@@ -5,6 +5,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanReference;
 
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
     private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
@@ -43,6 +44,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             for (PropertyValue pv : beanDefinition.getPropertyValues().getPropertyValueList()) {
                 String name = pv.getName();
                 Object value = pv.getValue();
+                if (value instanceof BeanReference) {
+                    BeanReference beanReference = (BeanReference) value;
+                    value = getBean(beanReference.getBeanName());
+                }
                 // 通过反射设置字段
                 BeanUtil.setFieldValue(bean, name, value);
             }

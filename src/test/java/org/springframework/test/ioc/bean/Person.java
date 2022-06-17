@@ -1,9 +1,11 @@
-package org.springframework.test.ioc;
+package org.springframework.test.ioc.bean;
 
 public class Person {
     private String name;
 
     private Integer age;
+
+    private Car car;
 
     public String getName() {
         return name;
@@ -19,5 +21,13 @@ public class Person {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 }
