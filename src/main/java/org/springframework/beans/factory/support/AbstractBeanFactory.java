@@ -12,11 +12,6 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     @Override
-    public void registerBean(String name, Object bean) {
-        this.addSingleton(name, bean);
-    }
-
-    @Override
     public Object getBean(String name) {
         // 单例懒加载
         Object bean = this.getSingleton(name);
@@ -39,5 +34,11 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+        return ((T) getBean(name));
     }
 }
