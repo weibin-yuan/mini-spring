@@ -1,6 +1,8 @@
 package org.springframework.beans.factory.support;
 
+import cn.hutool.core.util.StrUtil;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -40,5 +42,11 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     @SuppressWarnings("unchecked")
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
         return ((T) getBean(name));
+    }
+
+    protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        if (bean instanceof DisposableBean || StrUtil.isNotEmpty(beanDefinition.getDestroyMethodName())) {
+            this.registerDisposableBean(beanName, new DisposableBeanAdapter(beanName, bean, beanDefinition));
+        }
     }
 }
