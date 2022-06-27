@@ -14,11 +14,14 @@ public class BeanDefinition {
 
     private String destroyMethodName;
 
+    private String scope;
+
     public BeanDefinition(Object beanClass) {
         this(beanClass, null);
     }
 
     public BeanDefinition(Object beanClass, PropertyValues propertyValues) {
+        this.scope = "";
         this.beanClass = beanClass;
         this.propertyValues = propertyValues != null ? propertyValues : new PropertyValues();
     }
@@ -53,5 +56,21 @@ public class BeanDefinition {
 
     public void setDestroyMethodName(String destroyMethodName) {
         this.destroyMethodName = destroyMethodName;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public boolean isSingleton() {
+        return "singleton".equals(this.scope) || "".equals(this.scope);
+    }
+
+    public boolean isPrototype() {
+        return "prototype".equals(this.scope);
     }
 }

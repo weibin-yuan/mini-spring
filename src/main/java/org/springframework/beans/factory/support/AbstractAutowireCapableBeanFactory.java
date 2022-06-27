@@ -34,8 +34,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
-        // 将bean放入单例map中
-        addSingleton(beanName, bean);
+        // 将单例bean放入单例map中
+        if (beanDefinition.isSingleton()) {
+            addSingleton(beanName, bean);
+        }
 
         // 注册有注销方法的bean
         this.registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
