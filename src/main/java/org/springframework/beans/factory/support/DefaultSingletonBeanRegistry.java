@@ -13,7 +13,8 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     private final Map<String, Object> disposableBeans = new HashMap<>();
 
-    protected void addSingleton(String beanName, Object singletonBean) {
+    @Override
+    public void addSingleton(String beanName, Object singletonBean) {
         Object oldObject = this.singletonObjects.get(beanName);
         if (oldObject != null) {
             throw new BeansException(beanName + ": There is already");
