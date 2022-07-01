@@ -8,8 +8,8 @@ import org.springframework.beans.factory.config.BeanReference;
 import org.springframework.beans.factory.support.CglibSubclassingInstantiationStrategy;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.InstantiationStrategy;
-import org.springframework.test.ioc.bean.Car;
-import org.springframework.test.ioc.bean.Person;
+import org.springframework.test.bean.Car;
+import org.springframework.test.bean.Person;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

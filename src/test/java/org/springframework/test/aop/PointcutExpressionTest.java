@@ -1,8 +1,8 @@
-package org.springframework.test.ioc;
+package org.springframework.test.aop;
 
 import org.junit.Test;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
-import org.springframework.test.ioc.service.HelloService;
+import org.springframework.test.service.HelloService;
 
 import java.lang.reflect.Method;
 
