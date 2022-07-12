@@ -12,9 +12,15 @@ import java.io.Serializable;
  * @Date 2022/7/7 16:54
  */
 public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeAdvice, Serializable {
-    private final MethodBeforeAdvice advice;
+    private MethodBeforeAdvice advice;
+
+    public MethodBeforeAdviceInterceptor() {}
 
     public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) {
+        this.advice = advice;
+    }
+
+    public void setAdvice(MethodBeforeAdvice advice) {
         this.advice = advice;
     }
 
