@@ -30,6 +30,8 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut implem
 
     private transient PointcutExpression pointcutExpression;
 
+    public AspectJExpressionPointcut() {}
+
     public AspectJExpressionPointcut(String expression) {
         PointcutParser pointcutParser = PointcutParser.getPointcutParserSupportingSpecifiedPrimitivesAndUsingSpecifiedClassLoaderForResolution(SUPPORTED_PRIMITIVES, this.getClass().getClassLoader());
         this.pointcutExpression = pointcutParser.parsePointcutExpression(expression);
