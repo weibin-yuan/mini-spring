@@ -1,4 +1,4 @@
-package org.springframework.test.ioc;
+package org.springframework.test.expanding;
 
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
