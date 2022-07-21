@@ -21,7 +21,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
-        // bean需要代理则返回代理对象
+        // 此处返回bean，会导致短路，不像下执行
         Object bean = this.resolveBeforeInstantiation(beanName, beanDefinition);
         if (bean != null) {
             return bean;
@@ -33,12 +33,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean;
         try {
             bean = createBeanInstance(beanDefinition);
+            // 实例化bean之后执行
+            boolean continueWithPropertyPopulation = this.applyBeanPostProcessorsAfterInstantiation(beanName, bean);
+            if (!continueWithPropertyPopulation) {
+                return bean;
+            }
             // 在设置bean属性之前，允许BeanPostProcessor修改属性值
             this.applyBeanPostprocessorsBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
             // 为bean填充属性
             this.applyPropertyValues(beanName, bean, beanDefinition);
             // 执行bean的初始化方法和BeanPostProcessor的前置、后置处理器方法
-            this.initializeBean(beanName, bean, beanDefinition);
+            bean = this.initializeBean(beanName, bean, beanDefinition);
         }catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
@@ -50,6 +55,24 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 注册有注销方法的bean
         this.registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
         return bean;
+    }
+
+    /**
+     * bean实例化后执行，如果返回false，不执行后续设置属性的逻辑
+     * @param beanName beanName
+     * @param bean bean
+     */
+    private boolean applyBeanPostProcessorsAfterInstantiation(String beanName, Object bean) {
+        boolean continueWithPropertyPopulation = true;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                if (!((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessAfterInstantiation(bean, beanName)) {
+                    continueWithPropertyPopulation = false;
+                    break;
+                }
+            }
+        }
+        return continueWithPropertyPopulation;
     }
 
     public InstantiationStrategy getInstantiationStrategy() {
@@ -142,7 +165,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     /**
-     * 走生成代理会导致短路，不会走原来的创建bean流程
+     * 此处返回bean，会导致短路，不像下执行，不会走原来的创建bean流程
      * @return 代理对象
      */
     protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
