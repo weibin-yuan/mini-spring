@@ -119,7 +119,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Invocation of init method of bean[" + beanName + "] failed", ex);
         }
 
-        // 执行BeanPostProcessor的后置处理
+        // 执行BeanPostProcessor的后置处理，AOP代理对象在后置处理器AbstractAutoProxyCreator中生成
         wrapperBean = this.applyBeanPostProcessorsAfterInitialization(wrapperBean, beanName);
         return wrapperBean;
     }
