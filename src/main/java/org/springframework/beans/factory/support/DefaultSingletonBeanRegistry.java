@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
+    protected Map<String, Object> earlySingletonObjects = new HashMap<>(16);
+
     private final Map<String, Object> disposableBeans = new HashMap<>();
 
     @Override
@@ -24,7 +26,11 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     @Override
     public Object getSingleton(String beanName) {
-        return this.singletonObjects.get(beanName);
+        Object bean = this.singletonObjects.get(beanName);
+        if (bean == null) {
+            bean = this.earlySingletonObjects.get(beanName);
+        }
+        return bean;
     }
 
     public void registerDisposableBean(String beanName, Object disposableBean) {

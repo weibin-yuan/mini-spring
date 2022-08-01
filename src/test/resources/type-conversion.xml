@@ -8,6 +8,8 @@
 		 http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
     <bean id="car" class="org.springframework.test.bean.Car">
+<!--        xml定义的属性值会覆盖@Value注解注入的值-->
+        <property name="brand" value="test"/>
         <property name="price" value="1000000"/>
         <property name="produceDate" value="2021-01-01"/>
     </bean>
@@ -17,5 +19,11 @@
     </bean>
 
     <bean id="converters" class="org.springframework.test.common.ConvertersFactoryBean"/>
+
+    <bean id="autowiredAnnotationPostProcessor" class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+    <bean class="org.springframework.beans.factory.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:car.properties" />
+    </bean>
 
 </beans>

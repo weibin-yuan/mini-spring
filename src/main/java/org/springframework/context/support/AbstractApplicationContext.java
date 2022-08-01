@@ -88,7 +88,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         }
 
         // 提前实例化单例bean
-        beanFactory.preInstantiateSingletons();
+//        beanFactory.preInstantiateSingletons();
     }
 
     protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
