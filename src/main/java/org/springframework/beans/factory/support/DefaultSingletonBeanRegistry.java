@@ -2,6 +2,7 @@ package org.springframework.beans.factory.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.HashMap;
@@ -11,26 +12,45 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-    protected Map<String, Object> earlySingletonObjects = new HashMap<>(16);
+    private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
+
+    private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
     private final Map<String, Object> disposableBeans = new HashMap<>();
 
     @Override
     public void addSingleton(String beanName, Object singletonBean) {
-        Object oldObject = this.singletonObjects.get(beanName);
-        if (oldObject != null) {
-            throw new BeansException(beanName + ": There is already");
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.put(beanName, singletonBean);
+            this.earlySingletonObjects.remove(beanName);
+            this.singletonFactories.remove(beanName);
         }
-        this.singletonObjects.put(beanName, singletonBean);
     }
 
     @Override
     public Object getSingleton(String beanName) {
-        Object bean = this.singletonObjects.get(beanName);
-        if (bean == null) {
-            bean = this.earlySingletonObjects.get(beanName);
+        Object singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null) {
+            singletonObject = this.earlySingletonObjects.get(beanName);
+            if (singletonObject == null) {
+                ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+                if (singletonFactory != null) {
+                    singletonObject = singletonFactory.getObject();
+                    // 从三级缓存放入二级缓存
+                    this.earlySingletonObjects.put(beanName, singletonObject);
+                    this.singletonFactories.remove(beanName);
+                }
+            }
         }
-        return bean;
+        return singletonObject;
+    }
+
+    protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+        synchronized (this.singletonObjects) {
+            if (!this.singletonObjects.containsKey(beanName)) {
+                this.singletonFactories.put(beanName, singletonFactory);
+            }
+        }
     }
 
     public void registerDisposableBean(String beanName, Object disposableBean) {

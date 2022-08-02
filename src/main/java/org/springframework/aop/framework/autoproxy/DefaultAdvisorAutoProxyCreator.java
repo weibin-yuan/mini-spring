@@ -1,5 +1,6 @@
 package org.springframework.aop.framework.autoproxy;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.Advisor;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author ywb
@@ -25,6 +27,8 @@ import java.util.Collection;
  */
 public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPostProcessor, BeanFactoryAware {
     private DefaultListableBeanFactory beanFactory;
+
+    private final Set<Object> earlyProxyReferences = new ConcurrentHashSet<>(16);
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -57,6 +61,19 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (!this.earlyProxyReferences.contains(beanName)) {
+            return this.wrapIfNecessary(bean, beanName);
+        }
+        return bean;
+    }
+
+    @Override
+    public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException {
+        this.earlyProxyReferences.add(beanName);
+        return this.wrapIfNecessary(bean, beanName);
+    }
+
+    protected Object wrapIfNecessary(Object bean, String beanName) {
         // 避免死循环
         if (isInfrastructureClass(bean.getClass())) {
             return bean;

@@ -15,7 +15,8 @@ public class AdvisedSupport {
 
     private MethodMatcher methodMatcher;
 
-    private boolean proxyTargetClass = false;
+    // 是否使用cglib代理
+    private boolean proxyTargetClass = true;
 
     public TargetSource getTargetSource() {
         return targetSource;
